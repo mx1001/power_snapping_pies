@@ -122,7 +122,7 @@ class VIEW3D_PIE_SnapTarget(Menu):
 class VIEW3D_OT_SnapTargetVariable(bpy.types.Operator):
     bl_idname = "object.snaptargetvariable"
     bl_label = "Snap Target Variable"
-    variable = bpy.props.StringProperty()
+    variable: bpy.props.StringProperty()
 
     @classmethod
     def poll(cls, context):
@@ -139,7 +139,7 @@ class VIEW3D_OT_SnapTargetVariable(bpy.types.Operator):
 class VIEW3D_OT_SnapElementVariable(bpy.types.Operator):
     bl_idname = "object.snapelementvariable"
     bl_label = "Snap Element Variable"
-    variable = bpy.props.StringProperty()
+    variable: bpy.props.StringProperty()
 
     @classmethod
     def poll(cls, context):
