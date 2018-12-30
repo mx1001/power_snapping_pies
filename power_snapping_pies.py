@@ -218,8 +218,12 @@ def register():
     bpy.utils.register_class(VIEW3D_OT_SnapTargetVariable)
     bpy.utils.register_class(VIEW3D_OT_SnapElementVariable)
 
-
     wm = bpy.context.window_manager
+    kc = wm.keyconfigs.addon
+
+    if not kc:
+        print('no keyconfig path found, skipped (we must be in batch mode)')
+        return
 
     km = wm.keyconfigs.addon.keymaps.new(name = 'Object Mode')
     kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', shift=True).properties.name = "object.snapping_pie"
