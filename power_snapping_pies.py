@@ -182,16 +182,19 @@ class VIEW3D_PIE_origin(Menu):
         pie.operator("view3d.snap_selected_to_cursor", icon="RADIOBUT_ON")
         pie.operator("view3d.snap_cursor_to_selected", icon="CLIPUV_HLT")
 
-        # set origin to selection in Edit Mode, set origin to cursor in Object mode
-        if context.object.mode == "EDIT":
-            pie.operator("object.origin_to_selected", icon="OUTLINER_OB_EMPTY")
-        else:
-            pie.operator("object.origin_set",icon="EMPTY_DATA", text="Origin to Cursor").type="ORIGIN_CURSOR"
+        # check first to make sure an object even exists, if not we skip this block
+        if context.object:
+            # set origin to selection in Edit Mode
+            if context.object.mode == "EDIT":
+                pie.operator("object.origin_to_selected", icon="OUTLINER_OB_EMPTY")
+            else:
+                pie.operator("object.origin_set",icon="EMPTY_DATA", text="Origin to Cursor").type="ORIGIN_CURSOR"
 
-        if context.object.mode == "OBJECT":
-            pie.operator("object.origin_set",icon="MESH_CUBE", text="Origin to Geometry").type="ORIGIN_GEOMETRY"
-        else:
-            pie.operator("object.origin_to_geometry", icon="MESH_CUBE")
+            # set origin to cursor in Object mode
+            if context.object.mode == "OBJECT":
+                pie.operator("object.origin_set",icon="MESH_CUBE", text="Origin to Geometry").type="ORIGIN_GEOMETRY"
+            else:
+                pie.operator("object.origin_to_geometry", icon="MESH_CUBE")
 
         pie.operator("view3d.snap_cursor_to_center", icon="RADIOBUT_ON")
         pie.operator("wm.call_menu_pie", text="Element / Target", icon='PLUS').name = "VIEW3D_PIE_SnapTarget"
