@@ -23,13 +23,13 @@ def enhanced_snapping_toggle(context):
     if settings.snap_elements !=  {'VERTEX'}:
         settings.snap_elements = {'VERTEX'}
         if ob and ob.mode == 'EDIT':
-            bpy.ops.mesh.select_mode(use_extend=False, type={'VERT'})
+            bpy.context.tool_settings.mesh_select_mode = (True, False, False)
     else:
         settings.snap_elements = {'FACE'}
         if ob and ob.mode == 'EDIT':
-            bpy.ops.mesh.select_mode(use_extend=False, type={'VERT'})
-            bpy.ops.mesh.select_mode(use_extend=True, type={'EDGE'})
-            bpy.ops.mesh.select_mode(use_extend=True, type={'FACE'})
+            bpy.context.tool_settings.mesh_select_mode = (True, False, False)
+            bpy.context.tool_settings.mesh_select_mode = (False, True, False)
+            bpy.context.tool_settings.mesh_select_mode = (False, False, True)
  
 
 
