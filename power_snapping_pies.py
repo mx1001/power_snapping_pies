@@ -56,7 +56,7 @@ def origin_to_geometry(context):
 ########### CUSTOM OPERATORS ###############
 
 
-class VIEW3D_OT_enhanced_snap_toggle(bpy.types.Operator):
+class SNAP_MT_enhanced_snap_toggle(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "scene.enhanced_snap_toggle"
     bl_label = "Toggle Vertex/Face Snapping"
@@ -72,7 +72,7 @@ class VIEW3D_OT_enhanced_snap_toggle(bpy.types.Operator):
  
 
 
-class VIEW3D_OT_origin_to_selected(bpy.types.Operator):
+class SNAP_MT_origin_to_selected(bpy.types.Operator):
     bl_idname="object.origin_to_selected"
     bl_label="Origin to Selection"
 
@@ -86,7 +86,7 @@ class VIEW3D_OT_origin_to_selected(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_OT_origin_to_geometry(bpy.types.Operator):
+class SNAP_MT_origin_to_geometry(bpy.types.Operator):
     bl_idname="object.origin_to_geometry"
     bl_label="Origin to Geometry"
 
@@ -101,7 +101,7 @@ class VIEW3D_OT_origin_to_geometry(bpy.types.Operator):
 
 
 #Menu Snap Target
-class VIEW3D_PIE_SnapTarget(Menu):
+class SNAP_MT_SnapTarget(Menu):
     bl_label = "Snap Target Menu"
 
     def draw(self, context):
@@ -119,7 +119,7 @@ class VIEW3D_PIE_SnapTarget(Menu):
 
 
 
-class VIEW3D_OT_SnapTargetVariable(bpy.types.Operator):
+class SNAP_MT_SnapTargetVariable(bpy.types.Operator):
     bl_idname = "object.snaptargetvariable"
     bl_label = "Snap Target Variable"
     variable: bpy.props.StringProperty()
@@ -136,7 +136,7 @@ class VIEW3D_OT_SnapTargetVariable(bpy.types.Operator):
 
 
 
-class VIEW3D_OT_SnapElementVariable(bpy.types.Operator):
+class SNAP_MT_SnapElementVariable(bpy.types.Operator):
     bl_idname = "object.snapelementvariable"
     bl_label = "Snap Element Variable"
     variable: bpy.props.StringProperty()
@@ -152,7 +152,7 @@ class VIEW3D_OT_SnapElementVariable(bpy.types.Operator):
 
 
 #Menu Snap Element
-class VIEW3D_PIE_SnapElementMenu(Menu):
+class SNAP_MT_SnapElementMenu(Menu):
     bl_label = "Snap Element"
 
     def draw(self, context):
@@ -167,7 +167,7 @@ class VIEW3D_PIE_SnapElementMenu(Menu):
 
 ################### PIES #####################
 
-class VIEW3D_PIE_origin(Menu):
+class SNAP_MT_origin(Menu):
     # label is displayed at the center of the pie menu.
     bl_label = "Origin"
     bl_idname = "object.snapping_pie"
@@ -197,7 +197,7 @@ class VIEW3D_PIE_origin(Menu):
                 pie.operator("object.origin_to_geometry", icon="MESH_CUBE")
 
         pie.operator("view3d.snap_cursor_to_center", icon="RADIOBUT_ON")
-        pie.operator("wm.call_menu_pie", text="Element / Target", icon='PLUS').name = "VIEW3D_PIE_SnapTarget"
+        pie.operator("wm.call_menu_pie", text="Element / Target", icon='PLUS').name = "SNAP_MT_SnapTarget"
 
        
         if tool_settings.use_snap:
@@ -212,14 +212,14 @@ class VIEW3D_PIE_origin(Menu):
 ########## REGISTER ############
 
 def register():
-    bpy.utils.register_class(VIEW3D_PIE_origin)
-    bpy.utils.register_class(VIEW3D_PIE_SnapElementMenu)
-    bpy.utils.register_class(VIEW3D_PIE_SnapTarget)
-    bpy.utils.register_class(VIEW3D_OT_origin_to_selected)
-    bpy.utils.register_class(VIEW3D_OT_enhanced_snap_toggle)
-    bpy.utils.register_class(VIEW3D_OT_origin_to_geometry)
-    bpy.utils.register_class(VIEW3D_OT_SnapTargetVariable)
-    bpy.utils.register_class(VIEW3D_OT_SnapElementVariable)
+    bpy.utils.register_class(SNAP_MT_origin)
+    bpy.utils.register_class(SNAP_MT_SnapElementMenu)
+    bpy.utils.register_class(SNAP_MT_SnapTarget)
+    bpy.utils.register_class(SNAP_MT_origin_to_selected)
+    bpy.utils.register_class(SNAP_MT_enhanced_snap_toggle)
+    bpy.utils.register_class(SNAP_MT_origin_to_geometry)
+    bpy.utils.register_class(SNAP_MT_SnapTargetVariable)
+    bpy.utils.register_class(SNAP_MT_SnapElementVariable)
 
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
@@ -239,14 +239,14 @@ def register():
 
 def unregister():
 
-    bpy.utils.unregister_class(VIEW3D_PIE_origin)
-    bpy.utils.unregister_class(VIEW3D_PIE_SnapElementMenu)
-    bpy.utils.unregister_class(VIEW3D_PIE_SnapTarget)
-    bpy.utils.unregister_class(VIEW3D_OT_origin_to_selected)
-    bpy.utils.unregister_class(VIEW3D_OT_enhanced_snap_toggle)
-    bpy.utils.unregister_class(VIEW3D_OT_origin_to_geometry)
-    bpy.utils.unregister_class(VIEW3D_OT_SnapTargetVariable)
-    bpy.utils.unregister_class(VIEW3D_OT_SnapElementVariable)
+    bpy.utils.unregister_class(SNAP_MT_origin)
+    bpy.utils.unregister_class(SNAP_MT_SnapElementMenu)
+    bpy.utils.unregister_class(SNAP_MT_SnapTarget)
+    bpy.utils.unregister_class(SNAP_MT_origin_to_selected)
+    bpy.utils.unregister_class(SNAP_MT_enhanced_snap_toggle)
+    bpy.utils.unregister_class(SNAP_MT_origin_to_geometry)
+    bpy.utils.unregister_class(SNAP_MT_SnapTargetVariable)
+    bpy.utils.unregister_class(SNAP_MT_SnapElementVariable)
 
 
 if __name__ == "__main__":
