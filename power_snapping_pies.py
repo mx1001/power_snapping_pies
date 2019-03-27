@@ -7,13 +7,11 @@ bl_info = {
     "category": "3D View",
     }
 
-
-
 import bpy
-from bpy.types import Menu
-
+from bpy.types import Operator, Menu
 
 ###### FUNCTIONS ##########
+
 
 def enhanced_snapping_toggle(context):
     settings = context.scene.tool_settings
@@ -30,7 +28,6 @@ def enhanced_snapping_toggle(context):
             bpy.ops.mesh.select_mode(use_extend=False, type={'VERT'})
             bpy.ops.mesh.select_mode(use_extend=True, type={'EDGE'})
             bpy.ops.mesh.select_mode(use_extend=True, type={'FACE'})
- 
 
 
 def origin_to_selection(context):
@@ -53,26 +50,25 @@ def origin_to_geometry(context):
         bpy.ops.object.mode_set(mode="EDIT")
 
 
-########### CUSTOM OPERATORS ###############
+########### OPERATORS ###############
 
 
-class SNAP_MT_enhanced_snap_toggle(bpy.types.Operator):
+class PSP_OT_enhanced_snap_toggle(Operator):
     """Tooltip"""
     bl_idname = "scene.enhanced_snap_toggle"
     bl_label = "Toggle Vertex/Face Snapping"
- 
+
     @classmethod
     def poll(cls, context):
         space = context.space_data
         return space.type == 'VIEW_3D'
- 
+
     def execute(self, context):
         enhanced_snapping_toggle(context)
         return {'FINISHED'}
- 
 
 
-class SNAP_MT_origin_to_selected(bpy.types.Operator):
+class PSP_OT_origin_to_selected(Operator):
     bl_idname="object.origin_to_selected"
     bl_label="Origin to Selection"
 
@@ -86,7 +82,7 @@ class SNAP_MT_origin_to_selected(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class SNAP_MT_origin_to_geometry(bpy.types.Operator):
+class PSP_OT_origin_to_geometry(Operator):
     bl_idname="object.origin_to_geometry"
     bl_label="Origin to Geometry"
 
@@ -100,8 +96,39 @@ class SNAP_MT_origin_to_geometry(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class PSP_OT_SnapTargetVariable(Operator):
+    bl_idname = "object.snaptargetvariable"
+    bl_label = "Snap Target Variable"
+    variable: bpy.props.StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        bpy.context.scene.tool_settings.snap_target=self.variable
+        return {'FINISHED'}
+
+
+class PSP_OT_SnapElementVariable(Operator):
+    bl_idname = "object.snapelementvariable"
+    bl_label = "Snap Element Variable"
+    variable: bpy.props.StringProperty()
+
+    @classmethod
+    def poll(cls, context):
+        return True
+
+    def execute(self, context):
+        bpy.context.scene.tool_settings.snap_elements={self.variable}
+        return {'FINISHED'}
+
+
+################### PIES #####################
+
+
 #Menu Snap Target
-class SNAP_MT_SnapTarget(Menu):
+class PSP_MT_SnapTarget(Menu):
     bl_label = "Snap Target Menu"
 
     def draw(self, context):
@@ -118,41 +145,8 @@ class SNAP_MT_SnapTarget(Menu):
         pie.operator("object.snapelementvariable", text="Increment", icon="RADIOBUT_ON").variable='INCREMENT'
 
 
-
-class SNAP_MT_SnapTargetVariable(bpy.types.Operator):
-    bl_idname = "object.snaptargetvariable"
-    bl_label = "Snap Target Variable"
-    variable: bpy.props.StringProperty()
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        bpy.context.scene.tool_settings.snap_target=self.variable
-        return {'FINISHED'}
-
-
-
-
-
-class SNAP_MT_SnapElementVariable(bpy.types.Operator):
-    bl_idname = "object.snapelementvariable"
-    bl_label = "Snap Element Variable"
-    variable: bpy.props.StringProperty()
-
-    @classmethod
-    def poll(cls, context):
-        return True
-
-    def execute(self, context):
-        bpy.context.scene.tool_settings.snap_elements={self.variable}
-        return {'FINISHED'}
-
-
-
 #Menu Snap Element
-class SNAP_MT_SnapElementMenu(Menu):
+class PSP_MT_SnapElementMenu(Menu):
     bl_label = "Snap Element"
 
     def draw(self, context):
@@ -162,15 +156,9 @@ class SNAP_MT_SnapElementMenu(Menu):
         pie.prop(settings, "snap_elements", expand=True)
 
 
-
-
-
-################### PIES #####################
-
-class SNAP_MT_origin(Menu):
+class PSP_MT_PowerSnap(Menu):
     # label is displayed at the center of the pie menu.
     bl_label = "Origin"
-    bl_idname = "object.snapping_pie"
 
     def draw(self, context):
         context = bpy.context
@@ -197,29 +185,29 @@ class SNAP_MT_origin(Menu):
                 pie.operator("object.origin_to_geometry", icon="MESH_CUBE")
 
         pie.operator("view3d.snap_cursor_to_center", icon="RADIOBUT_ON")
-        pie.operator("wm.call_menu_pie", text="Element / Target", icon='PLUS').name = "SNAP_MT_SnapTarget"
+        pie.operator("wm.call_menu_pie", text="Element / Target", icon='PLUS').name = "PSP_MT_SnapTarget"
 
-       
+
         if tool_settings.use_snap:
             pie.prop(context.scene.tool_settings, "use_snap", text="Use Snap(ON)")
         else:
             pie.prop(context.scene.tool_settings, "use_snap", text="Use Snap(OFF)")
-            
-        pie.operator("scene.enhanced_snap_toggle", icon="AUTOMERGE_ON")
 
+        pie.operator("scene.enhanced_snap_toggle", icon="AUTOMERGE_ON")
 
 
 ########## REGISTER ############
 
+
 def register():
-    bpy.utils.register_class(SNAP_MT_origin)
-    bpy.utils.register_class(SNAP_MT_SnapElementMenu)
-    bpy.utils.register_class(SNAP_MT_SnapTarget)
-    bpy.utils.register_class(SNAP_MT_origin_to_selected)
-    bpy.utils.register_class(SNAP_MT_enhanced_snap_toggle)
-    bpy.utils.register_class(SNAP_MT_origin_to_geometry)
-    bpy.utils.register_class(SNAP_MT_SnapTargetVariable)
-    bpy.utils.register_class(SNAP_MT_SnapElementVariable)
+    bpy.utils.register_class(PSP_MT_PowerSnap)
+    bpy.utils.register_class(PSP_MT_SnapElementMenu)
+    bpy.utils.register_class(PSP_MT_SnapTarget)
+    bpy.utils.register_class(PSP_OT_origin_to_selected)
+    bpy.utils.register_class(PSP_OT_enhanced_snap_toggle)
+    bpy.utils.register_class(PSP_OT_origin_to_geometry)
+    bpy.utils.register_class(PSP_OT_SnapTargetVariable)
+    bpy.utils.register_class(PSP_OT_SnapElementVariable)
 
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
@@ -229,24 +217,22 @@ def register():
         return
 
     km = wm.keyconfigs.addon.keymaps.new(name = 'Object Mode')
-    kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', shift=True).properties.name = "object.snapping_pie"
+    kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', shift=True).properties.name = "PSP_MT_PowerSnap"
 
     km = wm.keyconfigs.addon.keymaps.new(name = 'Mesh')
-    kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS',shift=True).properties.name = "object.snapping_pie"
-
-
+    kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS',shift=True).properties.name = "PSP_MT_PowerSnap"
 
 
 def unregister():
 
-    bpy.utils.unregister_class(SNAP_MT_origin)
-    bpy.utils.unregister_class(SNAP_MT_SnapElementMenu)
-    bpy.utils.unregister_class(SNAP_MT_SnapTarget)
-    bpy.utils.unregister_class(SNAP_MT_origin_to_selected)
-    bpy.utils.unregister_class(SNAP_MT_enhanced_snap_toggle)
-    bpy.utils.unregister_class(SNAP_MT_origin_to_geometry)
-    bpy.utils.unregister_class(SNAP_MT_SnapTargetVariable)
-    bpy.utils.unregister_class(SNAP_MT_SnapElementVariable)
+    bpy.utils.unregister_class(PSP_MT_PowerSnap)
+    bpy.utils.unregister_class(PSP_MT_SnapElementMenu)
+    bpy.utils.unregister_class(PSP_MT_SnapTarget)
+    bpy.utils.unregister_class(PSP_OT_origin_to_selected)
+    bpy.utils.unregister_class(PSP_OT_enhanced_snap_toggle)
+    bpy.utils.unregister_class(PSP_OT_origin_to_geometry)
+    bpy.utils.unregister_class(PSP_OT_SnapTargetVariable)
+    bpy.utils.unregister_class(PSP_OT_SnapElementVariable)
 
 
 if __name__ == "__main__":
